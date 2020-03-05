@@ -1,5 +1,8 @@
 package com.example.sharedmodule
 
+import platform.UIKit.UIDevice
+
 actual fun platformName(): String {
-    return "Iphone"
+    return UIDevice.currentDevice.systemName() + " *** " +
+            UIDevice.currentDevice.systemVersion
 }
