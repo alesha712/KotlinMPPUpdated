@@ -10,9 +10,18 @@ import SwiftUI
 import SharedModule
 
 struct ContentView: View {
+    @State var viewModel : ConversionViemModel = ConversionViemModel()
+    
+    
+    
     var body: some View {
-        Text(CommonKt.createApplicationScreenMessage())
+        VStack(alignment: .center, spacing: 8.0) {
+            Text(CommonKt.createApplicationScreenMessage())
+            Text("\(viewModel.model?.error?.message ?? "sdfsdf")")
+        }
+        
     }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {
@@ -20,3 +29,17 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+class ConversionViemModel {
+    var model : ConversionsModel?
+    
+    init() {
+         CommonKt.getConversionsList { (result) in
+            DispatchQueue.main.async {
+                            self.model = result
+            }
+        }
+    }
+}
+
+
