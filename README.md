@@ -30,10 +30,11 @@ __*Kotlin Multi platform - Jetbrains - main*__
 ~~~
 packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
-      
         exclude("META-INF/*.kotlin_module")
 }
-or : 
+~~~
+# or : 
+~~~
 packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
