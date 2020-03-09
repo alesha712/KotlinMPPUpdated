@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ConversionRates(
-    var error : ErrorException? = null,
+    var error: ErrorException? = null,
     val date: String? = null,
     val rates: HashMap<String, String>? = null,
     val base: String? = null,

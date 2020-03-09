@@ -18,13 +18,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
-class ConversionsRepo{
+class ConversionsRepo {
 
     private val client = HttpClient()
     private val api: ConversionsApi = ConversionsApi()
 
     fun getConversionRates(callBack: (ConversionsModel) -> Unit) {
-            //This is the model that will be returned to the client
+        //This is the model that will be returned to the client
         CoroutineScope(ApplicationDispatcher).launch {
             val conversions = ConversionsModel()
             if (CacheManager.isRatesListAvailable()) {
@@ -32,7 +32,10 @@ class ConversionsRepo{
                 callBack(conversions)
             } else {
                 try {
-                    val json = client.get<String>(api.baseUrl) {}
+                    val json = client.get<String>(api.baseUrl) {
+                        makeLog("$SERVER_LOG_SENDING_REQUEST : $SERVER_METHOD --> ${this.method.value} ${this.url.protocol.name}://${this.url.host}${this.url.encodedPath}")
+                    }
+                    makeLog("$SERVER_LOG_RESPONSE : ${api.baseUrl} ---> ${HttpStatusCode.OK.value} === $json")
                     val conversionJsonObj = Json.nonstrict.parse(ConversionRates.serializer(), json)
                     conversions.createRatesList(conversionJsonObj.rates)
 
@@ -57,40 +60,43 @@ class ConversionsRepo{
 
     private suspend fun getExchangeRate(base: String, value: String, callBack: (String) -> Unit) {
         CoroutineScope(ApplicationDispatcher).launch {
-        if (CacheManager.isExchangeRateAvailable(base, value)) {
-            makeLog("CACHE")
-            callBack(CacheManager.getSpecificExchangeRate(base, value))
-        } else {
-            makeLog("API")
-            try {
-                val json = client.get<String>(api.exchangeRate) {
-                    parameter(EXCHANGE_BASE, base)
-                    parameter(EXCHANGE_SYMBOLS, value)
-                    makeLog("$SERVER_LOG_SENDING_REQUEST : ${this.method} - ${this.url}")
-                }
-                val conversionJsonObj = Json.nonstrict.parse(ConversionRates.serializer(), json)
-                makeLog("$SERVER_LOG_RESPONSE : ${api.exchangeRate} ---> ${HttpStatusCode.OK.value} === $json")
-                CacheManager.addRateToHash(
-                    base,
-                    value,
-                    conversionJsonObj.rates?.get(value) ?: ""
-                )
+            if (CacheManager.isExchangeRateAvailable(base, value)) {
+                makeLog("$CACHE_DATA  ${CacheManager.getSpecificExchangeRate(base, value)}")
+                callBack(CacheManager.getSpecificExchangeRate(base, value))
+            } else {
+                makeLog(API_DATA)
+                try {
+                    var apiText = ""
+                    val json = client.get<String>(api.exchangeRate) {
+                        parameter(EXCHANGE_BASE, base)
+                        parameter(EXCHANGE_SYMBOLS, value)
+                        apiText =
+                            "${this.method.value} ${this.url.protocol.name}://${this.url.host}${this.url.encodedPath}?$EXCHANGE_BASE=$base&$EXCHANGE_SYMBOLS=$value"
+                        makeLog("$SERVER_LOG_SENDING_REQUEST : $SERVER_METHOD --> $apiText")
+                    }
+                    val conversionJsonObj = Json.nonstrict.parse(ConversionRates.serializer(), json)
+                    makeLog("$SERVER_LOG_RESPONSE : $apiText ---> ${HttpStatusCode.OK.value} === $json")
+                    CacheManager.addRateToHash(
+                        base,
+                        value,
+                        conversionJsonObj.rates?.get(value) ?: ""
+                    )
 
-                callBack(conversionJsonObj.rates?.get(value) ?: "0")
-            } catch (e: ResponseException) {
-                val url = e.message?.substringAfter("")
-                val a = url?.substringBefore(")")
-                makeLog("$SERVER_LOG_RESPONSE $a ----> ${e.response.status.value} : ${e.response.status.description}")
-                callBack("0")
-            } catch (e: Throwable) {
-                makeLog(e.message ?: UNKNOWN_ERROR_MESSAGE)
-                callBack("0")
-            } catch (e: Exception) {
-                makeLog(e.message ?: UNKNOWN_ERROR_MESSAGE)
-                callBack("0")
+                    callBack(conversionJsonObj.rates?.get(value) ?: "0")
+                } catch (e: ResponseException) {
+                    val url = e.message?.substringAfter("")
+                    val a = url?.substringBefore(")")
+                    makeLog("$SERVER_LOG_RESPONSE $a ----> ${e.response.status.value} : ${e.response.status.description}")
+                    callBack("0")
+                } catch (e: Throwable) {
+                    makeLog(e.message ?: UNKNOWN_ERROR_MESSAGE)
+                    callBack("0")
+                } catch (e: Exception) {
+                    makeLog(e.message ?: UNKNOWN_ERROR_MESSAGE)
+                    callBack("0")
+                }
             }
         }
-              }
     }
 
     suspend fun convertRates(

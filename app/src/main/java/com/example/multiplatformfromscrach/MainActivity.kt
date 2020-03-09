@@ -13,20 +13,33 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    var number = 5.34423
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         tvTitle.text = createApplicationScreenMessage()
 
-        CoroutineScope(Dispatchers.Main).launch {
-            getConversionsList {
-                    try {
-                        tvTitle.text = it.error?.message ?: "ERROR"
-                    } catch (e: Exception) {
-                        Log.d("alex", e.message)
-                    }
+        getConversionsList {
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    tvTitle.text = it.currenciesList.size.toString()
+                } catch (e: Exception) {
+                    Log.d("alex", e.message ?: "error")
+                }
+            }
+        }
 
+        tvTitle.setOnClickListener {
+            convertRate("USD", "ILS", number.toString()) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        tvTitle.text = it.result ?: "couldnt get result"
+                        number += 100000
+                    } catch (e: Exception) {
+                        Log.d("alex", e.message ?: "error")
+                    }
+                }
             }
         }
     }

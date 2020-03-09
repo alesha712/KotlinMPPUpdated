@@ -17,7 +17,7 @@ struct ContentView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 8.0) {
             Text(CommonKt.createApplicationScreenMessage())
-            Text("\(viewModel.model?.error?.message ?? "sdfsdf")")
+            Text("\(viewModel.model?.currenciesList.count ?? 00000)")
         }
         
     }
@@ -32,11 +32,18 @@ struct ContentView_Previews: PreviewProvider {
 
 class ConversionViemModel {
     var model : ConversionsModel?
+    var amount : String?
     
     init() {
          CommonKt.getConversionsList { (result) in
             DispatchQueue.main.async {
                             self.model = result
+            }
+        }
+        CommonKt.convertRate(base: "USD", convertTo: "ILS", amount: "123123") { (result) in
+            DispatchQueue.main.async {
+                self.amount = result.result
+                print(self.amount ?? "default value")
             }
         }
     }
