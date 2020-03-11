@@ -1,6 +1,24 @@
 # MultiPlatformKotlin-Feb20
  
-https://medium.com/dev-machina/multiplatform-programming-using-kotlin-native-a-mobile-developers-quest-part-2-c903fda4f23
+ ### About this project:
+ This project was written in February 2020 to match the new platforms (Xcode and Android Studio).
+- Xcode 11.0 
+- Android Studio 3.6
+- Dependecies versions:
+~~~
+    ext.kotlin_version = '1.3.61'
+    ext.ktorVer = '1.3.0'
+    ext.coroutinesVer = '1.3.3'
+    ext.kotlix_serialization = '0.14.0'
+~~~
+
+This project was planned to make android and iOS platforms to use the same business logic that was written once. 
+As Kotlin-Multi-Platform is still experimental, the function to format numbers was written from scratch in the "common" directory instead of using the android or iOS native ways.
+
+This project uses https://exchangeratesapi.io/ API to recieve exchange rates.
+
+This Medium article was very helpfull trying to make the first Kotlin Multi Platform project:
+- https://medium.com/dev-machina/multiplatform-programming-using-kotlin-native-a-mobile-developers-quest-part-2-c903fda4f23
 
 __*Kotlin Multi platform - Jetbrains - main*__
 >https://www.jetbrains.com/lp/mobilecrossplatform/
