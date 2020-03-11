@@ -57,7 +57,7 @@ packagingOptions {
         exclude("META-INF/*.kotlin_module")
 }
 ~~~
-### or : 
+### or: 
 ~~~
 packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
