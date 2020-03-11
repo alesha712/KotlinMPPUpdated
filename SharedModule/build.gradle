@@ -1,5 +1,5 @@
 apply plugin: 'kotlin-multiplatform'
-
+apply plugin: 'kotlinx-serialization'
 kotlin {
     targets {
         final def iOSTarget = System.getenv('SDK_NAME')?.startsWith("iphoneos") ? presets.iosArm64 : presets.iosX64
@@ -13,30 +13,33 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api "org.jetbrains.kotlin:kotlin-stdlib-common:$rootProject.kotlin_version"
-            /*implementation "io.ktor:ktor-client-core:$rootProject.ktorVer"
-            implementation "io.ktor:ktor-client-json:$rootProject.ktorVer"
-            implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$rootProject.coroutinesVer"
-            implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$rootProject.kotlix_serialization"
 
-            implementation "org.jetbrains.kotlin:kotlin-serialization:$rootProject.kotlin_version"*/
+            implementation "io.ktor:ktor-client:$rootProject.ktorVer"
+            implementation "io.ktor:ktor-client-core:$rootProject.ktorVer"
+            implementation "io.ktor:ktor-client-json:$rootProject.ktorVer"
+
+            implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$rootProject.coroutinesVer"
+            
+            implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$rootProject.kotlix_serialization"
+            implementation "org.jetbrains.kotlin:kotlin-serialization:$rootProject.kotlin_version"
         }
         androidMain.dependencies {
             api "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlin_version"
-            /*implementation "io.ktor:ktor-client-android:$rootProject.ktorVer"
+
+            implementation "io.ktor:ktor-client-android:$rootProject.ktorVer"
             implementation "io.ktor:ktor-client-json-native:$rootProject.ktorVer"
+
             implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVer"
-            implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$rootProject.kotlix_serialization"*/
+            implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$rootProject.kotlix_serialization"
         }
         iosMain.dependencies {
-            //api "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlin_version"
-            /*implementation "io.ktor:ktor-client-ios:$rootProject.ktorVer"
+            api "org.jetbrains.kotlin:kotlin-stdlib:$rootProject.kotlin_version"
+            implementation "io.ktor:ktor-client-ios:$rootProject.ktorVer"
             implementation "io.ktor:ktor-client-core-native:$rootProject.ktorVer"
             implementation "io.ktor:ktor-client-json-native:$rootProject.ktorVer"
 
             implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$rootProject.coroutinesVer"
-
-            implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$rootProject.kotlix_serialization"*/
-
+            implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$rootProject.kotlix_serialization"
         }
     }
 }
