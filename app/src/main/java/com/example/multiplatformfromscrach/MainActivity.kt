@@ -1,56 +1,34 @@
 package com.example.multiplatformfromscrach
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.multiplatformfromscrach.adapter.ConversionRecyclerAdapter
+import com.example.multiplatformfromscrach.model.ConversionsDataModel
 import com.example.multiplatformfromscrach.viemodel.CurrenciesViewModel
-import com.example.sharedmodule.convertRate
-import com.example.sharedmodule.createApplicationScreenMessage
-import com.example.sharedmodule.getConversionsList
+import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
-
+    companion object{
+        val CONVERT_FROM = "convertFrom"
+        val CONVERT_TO = "convertTo"
+    }
     private lateinit var currenciesViewModel : CurrenciesViewModel
+    private lateinit var conversionRecyclerAdapter: ConversionRecyclerAdapter
+    private lateinit var layoutManagerFrom: LinearLayoutManager
 
-    var number = 5.34423
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initViewModel()
         setObservers()
-
-        tvTitle.text = createApplicationScreenMessage()
-
-       /* getConversionsList {
-            CoroutineScope(Dispatchers.Main).launch {
-                try {
-                    tvTitle.text = it.currenciesList.size.toString()
-                } catch (e: Exception) {
-                    Log.d("alex", e.message ?: "error")
-                }
-            }
-        }
-
-        tvTitle.setOnClickListener {
-            convertRate("USD", "ILS", number.toString()) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    try {
-                        tvTitle.text = it.result ?: "couldnt get result"
-                        number += 100000
-                    } catch (e: Exception) {
-                        Log.d("alex", e.message ?: "error")
-                    }
-                }
-            }
-        }*/
     }
 
     private fun initViewModel() {
@@ -60,9 +38,44 @@ class MainActivity : AppCompatActivity() {
     private fun setObservers() {
         currenciesViewModel.let {
             it.conversionsList.observe(this, Observer { list ->
-                updateView(list)
+                initRecyclerView(list)
+                //updateView(list)
             })
         }
+    }
+
+    private fun initRecyclerView(currenciesList: ArrayList<ConversionsDataModel>) {
+        if(recCurrencyListFrom.adapter == null){
+            conversionRecyclerAdapter = ConversionRecyclerAdapter()
+            layoutManagerFrom = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            recCurrencyListFrom.layoutManager = layoutManagerFrom
+            recCurrencyListFrom.adapter = conversionRecyclerAdapter
+            conversionRecyclerAdapter.setData(currenciesList, CONVERT_FROM)
+        }
+
+        if(recCurrencyListTo.adapter == null){
+            conversionRecyclerAdapter = ConversionRecyclerAdapter()
+            val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+            recCurrencyListTo.layoutManager = layoutManager
+            recCurrencyListTo.adapter = conversionRecyclerAdapter
+            conversionRecyclerAdapter.setData(currenciesList, CONVERT_TO)
+        }
+    }
+
+    private val itemClickCallback = fun (isChecked: Boolean, position : Int){
+        for (num in 0..layoutManagerFrom.childCount){
+            val itemView : ConstraintLayout? = layoutManagerFrom.findViewByPosition(position) as ConstraintLayout
+            val chip = itemView?.findViewById<Chip>(R.id.chipCurrency)
+
+            if(num == position){
+                chip?.isChecked = true
+                Log.d("alex", "set chip checked")
+            }
+
+            chip?.isChecked = false
+            Log.d("alex", "set chip Un-checked")
+        }
+        layoutManagerFrom.findViewByPosition(position)
     }
 
     private fun updateView(list: ArrayList<String>?) {
