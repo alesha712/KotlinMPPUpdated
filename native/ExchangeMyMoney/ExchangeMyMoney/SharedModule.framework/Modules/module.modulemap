@@ -1,6 +1,0 @@
-framework module SharedModule {
-    umbrella header "SharedModule.h"
-
-    export *
-    module * { export * }
-}

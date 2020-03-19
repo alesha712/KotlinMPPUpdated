@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		AC487F8523F3C01D00450085 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC487F7F23F3C01D00450085 /* Utils.swift */; };
 		AC487F8823F3C01D00450085 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC487F8223F3C01D00450085 /* ContentViewModel.swift */; };
-		AC4F3D3A2418B0CE00782E28 /* SharedModule.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC4F3D382418AF8300782E28 /* SharedModule.framework */; };
-		AC4F3D3B2418B0CE00782E28 /* SharedModule.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AC4F3D382418AF8300782E28 /* SharedModule.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AC4CDFE62423606900B77F6B /* SharedModule.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AC4CDFE42423606000B77F6B /* SharedModule.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		AC4CDFE72423606900B77F6B /* SharedModule.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AC4CDFE42423606000B77F6B /* SharedModule.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AC53040223F304B700246389 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC53040123F304B700246389 /* AppDelegate.swift */; };
 		AC53040423F304B700246389 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC53040323F304B700246389 /* SceneDelegate.swift */; };
 		AC53040623F304B700246389 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC53040523F304B700246389 /* ContentView.swift */; };
@@ -45,7 +45,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				AC4F3D3B2418B0CE00782E28 /* SharedModule.framework in Embed Frameworks */,
+				AC4CDFE72423606900B77F6B /* SharedModule.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -55,7 +55,7 @@
 /* Begin PBXFileReference section */
 		AC487F7F23F3C01D00450085 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		AC487F8223F3C01D00450085 /* ContentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
-		AC4F3D382418AF8300782E28 /* SharedModule.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SharedModule.framework; sourceTree = "<group>"; };
+		AC4CDFE42423606000B77F6B /* SharedModule.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SharedModule.framework; path = "../../SharedModule/build/xcode-frameworks/SharedModule.framework"; sourceTree = "<group>"; };
 		AC5303FE23F304B700246389 /* ExchangeMyMoney.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExchangeMyMoney.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC53040123F304B700246389 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AC53040323F304B700246389 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,7 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC4F3D3A2418B0CE00782E28 /* SharedModule.framework in Frameworks */,
+				AC4CDFE62423606900B77F6B /* SharedModule.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +101,7 @@
 		AC5303F523F304B600246389 = {
 			isa = PBXGroup;
 			children = (
+				AC4CDFE42423606000B77F6B /* SharedModule.framework */,
 				AC53040023F304B700246389 /* ExchangeMyMoney */,
 				AC53041723F304C300246389 /* ExchangeMyMoneyTests */,
 				AC53042223F304C300246389 /* ExchangeMyMoneyUITests */,
@@ -121,7 +122,6 @@
 		AC53040023F304B700246389 /* ExchangeMyMoney */ = {
 			isa = PBXGroup;
 			children = (
-				AC4F3D382418AF8300782E28 /* SharedModule.framework */,
 				AC53040123F304B700246389 /* AppDelegate.swift */,
 				AC53040323F304B700246389 /* SceneDelegate.swift */,
 				AC53040523F304B700246389 /* ContentView.swift */,
@@ -172,6 +172,7 @@
 				AC5303FB23F304B700246389 /* Frameworks */,
 				AC5303FC23F304B700246389 /* Resources */,
 				AC4F3D3C2418B0CE00782E28 /* Embed Frameworks */,
+				AC4CDFE82423623E00B77F6B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -287,6 +288,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AC4CDFE82423623E00B77F6B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd $SRCROOT/../../SharedModule/build/xcode-frameworks\n./gradlew :SharedModule:packForXCode -PXCODE_CONFIGURATION=${CONFIGURATION}\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		AC5303FA23F304B700246389 /* Sources */ = {
@@ -471,6 +492,7 @@
 					"$(PROJECT_DIR)/ExchangeMyMoney/**",
 					"\"$(SRCROOT)/ExchangeMyMoney\"/**",
 					"$(PROJECT_DIR)/ExchangeMyMoney",
+					"\"$(SRCROOT)/../../SharedModule/build/xcode-frameworks\"/**",
 				);
 				INFOPLIST_FILE = ExchangeMyMoney/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -497,6 +519,7 @@
 					"$(PROJECT_DIR)/ExchangeMyMoney/**",
 					"\"$(SRCROOT)/ExchangeMyMoney\"/**",
 					"$(PROJECT_DIR)/ExchangeMyMoney",
+					"\"$(SRCROOT)/../../SharedModule/build/xcode-frameworks\"/**",
 				);
 				INFOPLIST_FILE = ExchangeMyMoney/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

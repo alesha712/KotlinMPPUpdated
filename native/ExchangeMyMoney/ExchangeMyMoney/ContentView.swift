@@ -65,20 +65,39 @@ struct CurrencySelectorView: View {
     }
 }
 
-
+struct TriangleShape: View {
+    @Binding var colorBlack : Bool
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .center) {
+                Path { path in
+                    path.move(to: CGPoint(x: geometry.size.width/2, y: 0.0))
+                    path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/2, y: geometry.size.width/2))
+                    path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width, y: 0.0))
+                }.foregroundColor(Color.orange).colorMultiply(self.colorBlack ? Color.black : Color.red)
+                Path { path in
+                    path.move(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/2, y: 10.0))
+                    path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/4, y: (geometry.size.width/3)+10.0))
+                    path.addLine(to: CGPoint(x: (geometry.size.width/2)+3*(geometry.size.width/4), y: (geometry.size.width/3)+10.0))
+                }.foregroundColor(Color.orange).colorMultiply(self.colorBlack ? Color.red : Color.black)
+            }
+        }
+    }
+}
 
 struct ContentView: View {
     @ObservedObject var viewModel : ContentViewModel = ContentViewModel()
     @ObservedObject var keyboard = KeyboardResponder()
-
+    @State var isColoredBlack : Bool = false
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .center, spacing: 24.0) {
                 Text("Exchange My Money").font(.title)
-                if (viewModel.isLoading) {
+                if (viewModel.isLoadingList) {
                     Text("Loading...")
                 } else {
-                    if (!viewModel.strConversionError.isEmpty) {
+                    if (!viewModel.strListError.isEmpty) {
                         Text(viewModel.strListError)
                         .foregroundColor(Color.red)
                         .font(.title)
@@ -105,13 +124,16 @@ struct ContentView: View {
                 }
                 Button(action: {
                     self.viewModel.convert()
+                    withAnimation(.linear(duration: 0.6)) {
+                        self.isColoredBlack = !self.isColoredBlack
+                    }
                 }) {
-                    Text("Convert")
+                    Text(viewModel.isLoadingConversion ? "Converting..." : "Convert")
                     .foregroundColor(Color.white)
                     .multilineTextAlignment(.center).padding().frame(width: 135.0, height: 44.0)
                     .background(Color.black)
                     .cornerRadius(8)
-                }.disabled(viewModel.strFromCurrency.isEmpty)
+                }.disabled(viewModel.strFromCurrency.isEmpty || viewModel.isLoadingConversion)
                 if (!viewModel.result.isEmpty) {
                     Text("Conversion result")
                     Text(viewModel.result)
@@ -125,10 +147,13 @@ struct ContentView: View {
                         .font(.title)
                         .multilineTextAlignment(.center)
                 }
+                GeometryReader { geometry in
+                    TriangleShape(colorBlack: self.$isColoredBlack).frame(width: geometry.size.width/2, height: geometry.size.width/4, alignment: .trailing)
+                }
             }.onTapGesture {
                 UIApplication.shared.endEditing()
             }
-        }.padding(.bottom, keyboard.currentHeight - 20.0).padding(.top, 100.0).padding(.leading, 20.0).padding(.trailing, 20.0)
+        }.padding(.bottom, keyboard.currentHeight - 20.0).padding(.top, 20.0).padding(.leading, 20.0).padding(.trailing, 20.0)
     }
 }
 

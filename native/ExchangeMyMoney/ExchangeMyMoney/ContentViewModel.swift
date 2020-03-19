@@ -29,9 +29,10 @@ class ContentViewModel : ObservableObject {
     @Published var amount : String = "0.00" // amount to convert
     @Published var result : String = ""
     @Published var arrCurrencies : [Currency] = []
-    @Published var isLoading : Bool = true
+    @Published var isLoadingList : Bool = true
     @Published var strListError : String = ""
     @Published var strConversionError : String = ""
+    @Published var isLoadingConversion : Bool = false
     
     init() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
@@ -47,7 +48,7 @@ class ContentViewModel : ObservableObject {
                 if let error = model.error {
                     print(error)
                     self.strListError = error.message
-                    self.isLoading = false
+                    self.isLoadingList = false
                 } else if let arrCurrencies = model.currenciesList as? [NSString] {
                     self.arrCurrencies.removeAll(keepingCapacity: false)
                     for index in 0..<arrCurrencies.count {
@@ -60,20 +61,22 @@ class ContentViewModel : ObservableObject {
                     }
                     self.strFromCurrency = self.arrCurrencies.first?.strCurrency ?? ""
                     self.strToCurrency = self.arrCurrencies.first?.strCurrency ?? ""
-                    self.isLoading = false
+                    self.isLoadingList = false
                 }
             }
         }
     }
     
     func convert() {
+        self.isLoadingConversion = true
         CommonKt.convertRate(base: self.strFromCurrency, convertTo: self.strToCurrency, amount: self.amount) { (convertedResultModel) in
             if let error = convertedResultModel.error {
-                self.strConversionError = error.message
+                self.strConversionError = "Error: " + error.message
             }
             if let result = convertedResultModel.result {
                 self.result = result + " " + self.strToCurrency
             }
+            self.isLoadingConversion = false
         }
     }
 }
