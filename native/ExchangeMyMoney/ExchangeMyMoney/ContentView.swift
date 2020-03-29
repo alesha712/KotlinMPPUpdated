@@ -55,8 +55,8 @@ struct CurrencySelectorView: View {
                     }) {
                     Text(item.strCurrency)
                         .frame(width: 66.0, height: 44.0)
-                        .background((self.selectedCurrency == item.strCurrency) ? Color.red : Color.black)
-                        .foregroundColor((self.selectedCurrency == item.strCurrency) ? Color.black : Color.white)
+                        .background((self.selectedCurrency == item.strCurrency) ? Color("myRed") : Color("myBlack"))
+                        .foregroundColor((self.selectedCurrency == item.strCurrency) ? Color("myBlack") : Color.white)
                         .cornerRadius(8)
                     }
                 }
@@ -75,12 +75,12 @@ struct TriangleShape: View {
                     path.move(to: CGPoint(x: geometry.size.width/2, y: 0.0))
                     path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/2, y: geometry.size.width/2))
                     path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width, y: 0.0))
-                }.foregroundColor(Color.orange).colorMultiply(self.colorBlack ? Color.black : Color.red)
+                }.foregroundColor(self.colorBlack ? Color("myBlack") : Color("myRed"))
                 Path { path in
                     path.move(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/2, y: 10.0))
                     path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/4, y: (geometry.size.width/3)+10.0))
                     path.addLine(to: CGPoint(x: (geometry.size.width/2)+3*(geometry.size.width/4), y: (geometry.size.width/3)+10.0))
-                }.foregroundColor(Color.orange).colorMultiply(self.colorBlack ? Color.red : Color.black)
+                }.foregroundColor(self.colorBlack ? Color("myRed") : Color("myBlack"))
             }
         }
     }
@@ -99,7 +99,7 @@ struct ContentView: View {
                 } else {
                     if (!viewModel.strListError.isEmpty) {
                         Text(viewModel.strListError)
-                        .foregroundColor(Color.red)
+                        .foregroundColor(Color("myRed"))
                         .font(.title)
                         .multilineTextAlignment(.center)
                     } else {
@@ -107,7 +107,7 @@ struct ContentView: View {
                         CurrencySelectorView(arrCurrencies: $viewModel.arrCurrencies, selectedCurrency: $viewModel.strFromCurrency)
                         Text("Converting \(viewModel.strFromCurrency) to \(viewModel.strToCurrency)")
                             .fontWeight(.bold)
-                            .foregroundColor(Color.red)
+                            .foregroundColor(Color("myRed"))
                         Text("Choose target currency").font(.subheadline)
                         CurrencySelectorView(arrCurrencies: $viewModel.arrCurrencies, selectedCurrency: $viewModel.strToCurrency)
                     }
@@ -116,9 +116,10 @@ struct ContentView: View {
                 HStack(alignment: .center, spacing: 0.0) {
                     Spacer()
                     TextField("amount", text: $viewModel.amount) {
-                                       UIApplication.shared.endEditing()
+                        UIApplication.shared.endEditing()
                     }.multilineTextAlignment(TextAlignment.center).frame(width: 100.0)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .keyboardType(.decimalPad)
                     Text(viewModel.strFromCurrency).frame(width: 100.0).multilineTextAlignment(TextAlignment.leading)
                     Spacer()
                 }
@@ -131,7 +132,7 @@ struct ContentView: View {
                     Text(viewModel.isLoadingConversion ? "Converting..." : "Convert")
                     .foregroundColor(Color.white)
                     .multilineTextAlignment(.center).padding().frame(width: 135.0, height: 44.0)
-                    .background(Color.black)
+                    .background(Color("myBlack"))
                     .cornerRadius(8)
                 }.disabled(viewModel.strFromCurrency.isEmpty || viewModel.isLoadingConversion)
                 if (!viewModel.result.isEmpty) {
@@ -143,7 +144,7 @@ struct ContentView: View {
                 }
                 if (!viewModel.strConversionError.isEmpty) {
                     Text(viewModel.strConversionError)
-                        .foregroundColor(Color.red)
+                        .foregroundColor(Color("myRed"))
                         .font(.title)
                         .multilineTextAlignment(.center)
                 }
