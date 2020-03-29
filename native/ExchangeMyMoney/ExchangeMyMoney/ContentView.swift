@@ -131,7 +131,7 @@ struct ContentView: View {
                 }) {
                     Text(viewModel.isLoadingConversion ? "Converting..." : "Convert")
                     .foregroundColor(Color.white)
-                    .multilineTextAlignment(.center).padding().frame(width: 135.0, height: 44.0)
+                        .multilineTextAlignment(.center).padding().frame(width: 200.0, height: 44.0)
                     .background(Color("myBlack"))
                     .cornerRadius(8)
                 }.disabled(viewModel.strFromCurrency.isEmpty || viewModel.isLoadingConversion)
