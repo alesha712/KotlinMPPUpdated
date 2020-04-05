@@ -65,25 +65,30 @@ struct CurrencySelectorView: View {
     }
 }
 
-struct TriangleShape: View {
-    @Binding var colorBlack : Bool
-    
-    var body: some View {
-        GeometryReader { geometry in
-            ZStack(alignment: .center) {
-                Path { path in
-                    path.move(to: CGPoint(x: geometry.size.width/2, y: 0.0))
-                    path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/2, y: geometry.size.width/2))
-                    path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width, y: 0.0))
-                }.foregroundColor(self.colorBlack ? Color("myBlack") : Color("myRed"))
-                Path { path in
-                    path.move(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/2, y: 10.0))
-                    path.addLine(to: CGPoint(x: (geometry.size.width/2)+geometry.size.width/4, y: (geometry.size.width/3)+10.0))
-                    path.addLine(to: CGPoint(x: (geometry.size.width/2)+3*(geometry.size.width/4), y: (geometry.size.width/3)+10.0))
-                }.foregroundColor(self.colorBlack ? Color("myRed") : Color("myBlack"))
-            }
-        }
+struct TriangleUpShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.width/2, y: rect.height/4))
+        path.addLine(to: CGPoint(x: 3*rect.width/4, y: 3*rect.height/4))
+        path.addLine(to: CGPoint(x: rect.width/4, y: 3*rect.height/4))
+        path.addLine(to: CGPoint(x: rect.width/2, y: rect.height/4))
+        return path
     }
+    
+    
+}
+
+struct TriangleDownShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: 20.0, y: 0.0))
+        path.addLine(to: CGPoint(x: rect.width-20.0, y: 0.0))
+        path.addLine(to: CGPoint(x: rect.width/2, y: rect.height-20.0))
+        path.addLine(to: CGPoint(x: 20.0, y: 0.0))
+        return path
+    }
+    
+    
 }
 
 struct ContentView: View {
@@ -91,36 +96,37 @@ struct ContentView: View {
     @ObservedObject var keyboard = KeyboardResponder()
     @State var isColoredBlack : Bool = false
     var body: some View {
+        GeometryReader { geometry in
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .center, spacing: 24.0) {
                 Text("Exchange My Money").font(.title)
-                if (viewModel.isLoadingList) {
+                if (self.viewModel.isLoadingList) {
                     Text("Loading...")
                 } else {
-                    if (!viewModel.strListError.isEmpty) {
-                        Text(viewModel.strListError)
+                    if (!self.viewModel.strListError.isEmpty) {
+                        Text(self.viewModel.strListError)
                         .foregroundColor(Color("myRed"))
                         .font(.title)
                         .multilineTextAlignment(.center)
                     } else {
                         Text("Choose base currency").font(.subheadline)
-                        CurrencySelectorView(arrCurrencies: $viewModel.arrCurrencies, selectedCurrency: $viewModel.strFromCurrency)
-                        Text("Converting \(viewModel.strFromCurrency) to \(viewModel.strToCurrency)")
+                        CurrencySelectorView(arrCurrencies: self.$viewModel.arrCurrencies, selectedCurrency: self.$viewModel.strFromCurrency)
+                        Text("Converting \(self.viewModel.strFromCurrency) to \(self.viewModel.strToCurrency)")
                             .fontWeight(.bold)
                             .foregroundColor(Color("myRed"))
                         Text("Choose target currency").font(.subheadline)
-                        CurrencySelectorView(arrCurrencies: $viewModel.arrCurrencies, selectedCurrency: $viewModel.strToCurrency)
+                        CurrencySelectorView(arrCurrencies: self.$viewModel.arrCurrencies, selectedCurrency: self.$viewModel.strToCurrency)
                     }
                 }
                 Text("How much you want to convert?")
                 HStack(alignment: .center, spacing: 0.0) {
                     Spacer()
-                    TextField("amount", text: $viewModel.amount) {
+                    TextField("amount", text: self.$viewModel.amount) {
                         UIApplication.shared.endEditing()
                     }.multilineTextAlignment(TextAlignment.center).frame(width: 100.0)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .keyboardType(.decimalPad)
-                    Text(viewModel.strFromCurrency).frame(width: 100.0).multilineTextAlignment(TextAlignment.leading)
+                    Text(self.viewModel.strFromCurrency).frame(width: 100.0).multilineTextAlignment(TextAlignment.leading)
                     Spacer()
                 }
                 Button(action: {
@@ -129,32 +135,39 @@ struct ContentView: View {
                         self.isColoredBlack = !self.isColoredBlack
                     }
                 }) {
-                    Text(viewModel.isLoadingConversion ? "Converting..." : "Convert")
+                    Text(self.viewModel.isLoadingConversion ? "Converting..." : "Convert")
                     .foregroundColor(Color.white)
                         .multilineTextAlignment(.center).padding().frame(width: 200.0, height: 44.0)
                     .background(Color("myBlack"))
                     .cornerRadius(8)
-                }.disabled(viewModel.strFromCurrency.isEmpty || viewModel.isLoadingConversion)
-                if (!viewModel.result.isEmpty) {
+                }.disabled(self.viewModel.strFromCurrency.isEmpty || self.viewModel.isLoadingConversion)
+                if (!self.viewModel.result.isEmpty) {
                     Text("Conversion result")
-                    Text(viewModel.result)
+                    Text(self.viewModel.result)
                     
                 } else {
                     Text("Enter amount to convert")
                 }
-                if (!viewModel.strConversionError.isEmpty) {
-                    Text(viewModel.strConversionError)
+                if (!self.viewModel.strConversionError.isEmpty) {
+                    Text(self.viewModel.strConversionError)
+                        .fixedSize(horizontal: false, vertical: true)
                         .foregroundColor(Color("myRed"))
                         .font(.title)
                         .multilineTextAlignment(.center)
                 }
-                GeometryReader { geometry in
-                    TriangleShape(colorBlack: self.$isColoredBlack).frame(width: geometry.size.width/2, height: geometry.size.width/4, alignment: .trailing)
+                ZStack {
+                    TriangleDownShape()
+                        .fill(self.isColoredBlack ? Color("myBlack") : Color("myRed"))
+                        .frame(width: geometry.size.width, height: geometry.size.width/2, alignment: .center)
+                    TriangleUpShape()
+                        .fill(self.isColoredBlack ? Color("myRed") : Color("myBlack"))
+                        .frame(width: geometry.size.width, height: geometry.size.width/2, alignment: .center)
                 }
             }.onTapGesture {
                 UIApplication.shared.endEditing()
             }
-        }.padding(.bottom, keyboard.currentHeight - 20.0).padding(.top, 20.0).padding(.leading, 20.0).padding(.trailing, 20.0)
+        }.padding(.bottom, self.keyboard.currentHeight - 20.0).padding(.top, 20.0).padding(.leading, 20.0).padding(.trailing, 20.0)
+        }
     }
 }
 
