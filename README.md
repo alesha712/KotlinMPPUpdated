@@ -45,7 +45,15 @@ __*Kotlin Multi platform - Jetbrains - main*__
     ext.coroutinesVer = '1.3.3'
     ext.kotlix_serialization = '0.14.0'
 ~~~
+Updated versions:
+~~~
+    ext.kotlin_version = '1.3.71'
+    ext.ktorVer = '1.3.2'
+    ext.coroutinesVer = '1.3.3'
+    ext.kotlix_serialization = '0.20.0'
+~~~
 - Changing versions results in `./gradlew` build failling.
+- Inheritance is not possible with Kotlin-Multiplatform. At this point it is a known bug that reflects on each kotlin versions - up to 1.4 : *The only workaround is to put the classes in the same file with the inherited class*
 - Upgrading kotlin version, ktor, and gradle versions requires Xcode 11
 - The error: 
  > More than one file was found with OS independent path 'META-INF/ktor-http.kotlin_module'
